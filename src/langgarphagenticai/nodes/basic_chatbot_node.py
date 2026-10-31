@@ -12,4 +12,5 @@ class BasicChatbotNode:
         """
         Response send back to the graph builder
         """
-        return {"messages":self.llm.invoke(state["messages"])}
+        return {"messages":self.llm.invoke(state['messages'])}
+    
