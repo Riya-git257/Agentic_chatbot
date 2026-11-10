@@ -36,13 +36,7 @@ def load_langgraph_agenticai_app():
             if not model:
                 st.error("Error :LLM model could not be initialized")
                 return
-            
-            #Intialize and set up the graph based on use case
-            usecase = user_input.get("selected_usecase")
-
-            if not usecase:
-                    st.error("Error : No use case selected.")
-                    return
+    
             
             ##Graph Builder
             graph_builder = GraphBuilder(model)
@@ -55,5 +49,5 @@ def load_langgraph_agenticai_app():
                 return
 
         except Exception as e:
-            st.error(f"Error: Graph setup failed-{e}")
+            st.error(f"Error: Graph setup failed - {e}")
             return
