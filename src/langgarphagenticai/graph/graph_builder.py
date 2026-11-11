@@ -5,6 +5,7 @@ from src.langgarphagenticai.nodes.basic_chatbot_node import BasicChatbotNode
 from src.langgarphagenticai.tools.search_tool import get_tools,create_tools_node
 from langgraph.prebuilt import ToolNode,tools_condition
 from src.langgarphagenticai.nodes.chatbot_with_tool_node import ChatbotWithToolNode
+from src.langgarphagenticai.nodes.ai_news_node import AINewsNode
 
 class GraphBuilder:
     def __init__(self,model):
@@ -53,6 +54,25 @@ class GraphBuilder:
         self.graph_builder.add_edge("tools","chatbot")
         self.graph_builder.add_edge("chatbot",END)
 
+
+    def ai_news_builder_graph(self):
+        """
+        Build a graph for AI news usecase.
+        This method creates a graph that includes both a chatbot node and tool node . it defines tools ,
+        intialize the chatbot with tool capabilities and setup conditiotnal and direct edges between nodes
+        The chatbot node is set as the entry point.
+        """
+        ai_news_node = AINewsNode(self.llm)
+
+        self.graph_builder.add_node("fetch_news",ai_news_node.fetch_news)
+        self.graph_builder.add_node("Summarize_news",ai_news_node.summarize_news)
+        self.graph_builder.add_node("Save_news",ai_news_node.save_result)
+        self.graph_builder.add_edge(START,"fetch_news")
+        self.graph_builder.add_edge("fetch_news","Summarize_news")
+        self.graph_builder.add_edge("Summarize_news","Save_news")
+        self.graph_builder.add_edge("Save_news",END)
+
+
     def setup_graph(self,usecase: str):
         """
         Setup the graph for thr selected use case.
@@ -62,8 +82,11 @@ class GraphBuilder:
             self.basic_chatbot_build_graph()
         elif usecase == "Chatbot with Web tool":
             self.chatbot_with_tools_build()
+        elif usecase == "AI News":
+            self.ai_news_builder_graph()
         else:
             raise ValueError(f"Invalid usecase:{usecase}")
+        
         return self.graph_builder.compile()
     
     
